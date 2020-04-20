@@ -35,6 +35,13 @@ Route.group(() => {
   Route.get('/classroom/:id', 'ClassroomController.show');
   Route.patch('/classroom/:id', 'ClassroomController.update');
   Route.delete('/classroom/:id', 'ClassroomController.destroy');
+
+  // hostel routes
+  Route.get('/hostel', 'HostelController.index');
+  Route.post('/hostel', 'HostelController.store');
+  Route.get('/hostel/:id', 'HostelController.show');
+  Route.patch('/hostel/:id', 'HostelController.update');
+  Route.delete('/hostel/:id', 'HostelController.delete');
 })
   .prefix('/api/v1')
   .formats(['json']);

@@ -1,10 +1,11 @@
 'use strict';
 
-const TeacherSeeder = require('./TeacherSeeder');
-const UserSeeder = require('./UserSeeder');
-const ClassroomSeeder = require('./ClassroomSeeder');
-const HostelSeeder = require('./HostelSeeder');
-const RoomSeeder = require('./RoomSeeder');
+const TeacherSeeder = require('./source/TeacherSeeder');
+const UserSeeder = require('./source/UserSeeder');
+const ClassroomSeeder = require('./source/ClassroomSeeder');
+const HostelSeeder = require('./source/HostelSeeder');
+const RoomSeeder = require('./source/RoomSeeder');
+const StudentSeeder = require('./source/StudentSeeder');
 
 class DatabaseSeeder {
   async run() {
@@ -14,6 +15,7 @@ class DatabaseSeeder {
     await ClassroomSeeder.run();
     await HostelSeeder.run();
     await RoomSeeder.run();
+    await StudentSeeder.run();
   }
 }
 
