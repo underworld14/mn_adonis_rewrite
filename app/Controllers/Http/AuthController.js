@@ -1,93 +1,51 @@
-'use strict'
+'use strict';
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
+
+const User = use('App/Models/User');
 
 /**
  * Resourceful controller for interacting with auths
  */
 class AuthController {
   /**
-   * Show a list of all auths.
-   * GET auths
-   *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
-   * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
+  async register({ request, auth, response }) {
+    const body = request.only(['teacher_id', 'email', 'password', 'role']);
+
+    const data = await User.create(body);
+    const access_token = await auth.generate(data, { role: data.role });
+
+    return response.status(201).json({ status: 'success', data, access_token });
   }
 
   /**
-   * Render a form to be used for creating a new auth.
-   * GET auths/create
-   *
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
-   * @param {View} ctx.view
    */
-  async create ({ request, response, view }) {
+  async login({ request, auth, response }) {
+    const { email, password } = request.only(['email', 'password']);
+
+    const user = await User.findByOrFail('email', email);
+    const access_token = await auth.attempt(email, password, { role: user.role });
+
+    return response.status(201).json({ status: 'success', data: { user, access_token } });
   }
 
-  /**
-   * Create/save a new auth.
-   * POST auths
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async store ({ request, response }) {
-  }
-
-  /**
-   * Display a single auth.
-   * GET auths/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async show ({ params, request, response, view }) {
-  }
-
-  /**
-   * Render a form to update an existing auth.
-   * GET auths/:id/edit
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
-  async edit ({ params, request, response, view }) {
-  }
-
-  /**
-   * Update auth details.
-   * PUT or PATCH auths/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async update ({ params, request, response }) {
-  }
-
-  /**
-   * Delete a auth with id.
-   * DELETE auths/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
-  async destroy ({ params, request, response }) {
+  async getMe({ request, auth, response }) {
+    const user = await auth.getUser();
+    if (!user) {
+      return response.status(400).json({ status: 'error', message: 'invalid user' });
+    }
+    const data = await User.query().where('id', user.id).with('teachers').fetch();
+    return response.json({ status: 'success', data });
   }
 }
 
-module.exports = AuthController
+module.exports = AuthController;

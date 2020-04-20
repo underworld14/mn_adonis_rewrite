@@ -4,6 +4,9 @@
 const Model = use('Model');
 
 class Teacher extends Model {
+  users() {
+    return this.hasOne('App/Models/User');
+  }
   classrooms() {
     return this.hasOne('App/Models/Classroom');
   }

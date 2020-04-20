@@ -24,14 +24,17 @@ Route.group(() => {
   // root api
   Route.get('/', () => 'api service madinatunnajah');
 
+  // auth controller
+  Route.post('/auth/login', 'AuthController.login');
+  Route.post('/auth/register', 'AuthController.register');
+  Route.get('/auth/getme', 'AuthController.getMe').middleware(['auth']);
+
   // classroom routes
   Route.get('/classroom', 'ClassroomController.index');
   Route.post('/classroom', 'ClassroomController.store');
   Route.get('/classroom/:id', 'ClassroomController.show');
   Route.patch('/classroom/:id', 'ClassroomController.update');
   Route.delete('/classroom/:id', 'ClassroomController.destroy');
-
-  // Route.resource('/classroom', 'ClassroomController');
 })
   .prefix('/api/v1')
   .formats(['json']);

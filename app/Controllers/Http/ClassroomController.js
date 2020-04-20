@@ -5,7 +5,6 @@
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 const Classroom = use('App/Models/Classroom');
-const Database = use('Database');
 
 /**
  * Resourceful controller for interacting with classrooms
@@ -20,7 +19,7 @@ class ClassroomController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index({ request, response }) {
+  async index({ request, auth, response }) {
     const data = await Classroom.query().with('teachers').fetch();
 
     return response.json({ status: 'success', data });
@@ -35,7 +34,6 @@ class ClassroomController {
    * @param {Response} ctx.response
    */
   async store({ request, response }) {
-    console.log('hello route');
     const body = request.only(['teacher_id', 'name', 'place']);
 
     const data = await Classroom.create(body);
